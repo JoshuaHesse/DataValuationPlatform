@@ -18,17 +18,10 @@ The Data Valuation Platform is a comprehensive framework designed to evaluate an
 4. **TracIn Model**: Applies the TracIn method, calculating sample influence by tracing gradient descent. [View Code](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/DataValuationPlatform/models/knn_shapley/TracIn_model.py)
 5. **MVSA Model**: Implements the MVSA (Most Valuable Subset Analysis) for evaluating data subsets. [View Code](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/DataValuationPlatform/models/mvsa/MVSA_model.py)
 
+## Prerequisites
+The platform currently supports Python 3.8. Some required packages are not included in the pip install: Tensorflow (2.4.0), Datascope (0.0.10)
+
 ## Installation
-Provide instructions on how to install and set up your project. This might include steps to clone the repository, install dependencies, and any necessary configuration.
+The DataValuationPlatform will be installable using pip. Alternatively, you can clione this repository manually. 
+The KNN Shapley model is not available in the pip install package due to incompatibilites with the remaining platform (datascope uses numpy version 1.24.2, the remaining packages uses 1.19.2)
 
-## Usage
-Include examples or a guide on how to use the platform. You can provide code snippets or command-line instructions for users to follow.
-
-## Contributing
-Encourage contributions by providing guidelines on how contributors can get involved. Include instructions for submitting pull requests, reporting bugs, or suggesting enhancements.
-
-## License
-Specify the license under which your project is released.
-
-## Contact
-Provide your contact information or additional resources where users can get support or learn more about your project.
