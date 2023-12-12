@@ -11,5 +11,5 @@ from DataValuationPlatform.models.mvsa.MVSA_model import MVSA
 from DataValuationPlatform.models.tracin.TracIn_model import TracIn
 from DataValuationPlatform.models.catboost.CatBoost_model import CatBoost
 from DataValuationPlatform.models.dvrl.DVRL_model import DVRL
-from DataValuationPlatform.models.knn_shapley.KNN_Shapley_model import KNN_Shapley
+#from DataValuationPlatform.models.knn_shapley.KNN_Shapley_model import KNN_Shapley
 

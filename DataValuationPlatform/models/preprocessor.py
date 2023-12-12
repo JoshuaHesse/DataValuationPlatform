@@ -473,9 +473,9 @@ class HTSDataPreprocessor:
         for dataset_name in self.dataset_names:
             if dataset_name not in self.datasets:
                 self.datasets[dataset_name] = self.DatasetContainer(dataset_name)
-            self.datasets[dataset_name].training_set = pd.read_csv("../Datasets/" + dataset_name + "/" + dataset_name + "_train.csv")
+            self.datasets[dataset_name].training_set = pd.read_csv("../../Datasets/" + dataset_name + "/" + dataset_name + "_train.csv")
 
-            self.datasets[dataset_name].validation_set = pd.read_csv("../Datasets/" + dataset_name + "/" + dataset_name + "_val.csv")
+            self.datasets[dataset_name].validation_set = pd.read_csv("../../Datasets/" + dataset_name + "/" + dataset_name + "_val.csv")
             logging.info(f"Processed datasets loaded successfully for {dataset_name}")
             self.datasets[dataset_name].training_set_labels = self.datasets[dataset_name].training_set["Primary"]
             self.datasets[dataset_name].validation_set_labels = self.datasets[dataset_name].validation_set["Confirmatory"]
@@ -526,5 +526,11 @@ class HTSDataPreprocessor:
                 logging.info(f"{representation} loaded successfully for {dataset_name}")
 
     def get_dataset(self, dataset_name):
-        return self.datasets[dataset_name]
-    
+        try:
+            return self.datasets[dataset_name]
+        except KeyError:
+            # Handle the KeyError exception
+            available_names = ', '.join(self.dataset_names)
+            print(f"Use one of the following names: {available_names}")
+            return
+            
