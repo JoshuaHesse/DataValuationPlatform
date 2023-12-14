@@ -564,7 +564,8 @@ class Model:
     def apply_undersampling(
             self,
             dataset:HTSDataPreprocessor.DatasetContainer,
-            model: Optional = None
+            model: Optional = None,
+            steps: int = 19
             ) -> pd.DataFrame:
         """
           Applies undersampling techniques to a dataset and evaluates the performance of a machine learning model 
@@ -584,7 +585,7 @@ class Model:
     
         results_list = []
         remove_count = []        
-        for rm in range(19):
+        for rm in range(steps):
             rm = rm+1
             remove_count.append(int(len(dataset.training_set_labels)*0.05 * rm))
         
@@ -636,7 +637,7 @@ class Model:
             results_list.append((i, (prauc_basic_val,prauc_high_val,prauc_low_val )))
         
         percentages = []
-        for rm in range(19):
+        for rm in range(steps):
             rm = rm+1
             percentages.append(round(0.05 * rm, 3))
             

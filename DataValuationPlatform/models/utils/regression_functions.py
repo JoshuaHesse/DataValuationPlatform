@@ -19,11 +19,11 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 #gpflow and tensorflow arent present in the datascope environment,
 #and would throw errors otherwhise
 try:
-    from active_learning_utils.custom_kernels import TanimotoSVR, Tanimoto, TanimotoSK
+    from DataValuationPlatform.models.utils.custom_kernels import TanimotoSVR, Tanimoto, TanimotoSK
     import gpflow
     from gpflow.mean_functions import Constant
     from gpflow.utilities import print_summary
-    from active_learning_utils.regression_utils import build_and_compile_model
+    from DataValuationPlatform.models.utils.regression_utils import build_and_compile_model
 except ImportError:
     warnings.warn('GP_flow and co failed to import', ImportWarning)
 
