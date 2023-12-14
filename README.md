@@ -1,7 +1,16 @@
 # Data Valuation Platform
-
+![python version](https://img.shields.io/badge/python-v.3.8-blue)
+![license](https://img.shields.io/badge/license-MIT-orange)
 ## Overview
 The Data Valuation Platform is a comprehensive framework designed to evaluate and quantify the influence of data in various machine learning models. This platform integrates multiple algorithms and techniques to provide a robust analysis of data value.
+
+## Repository Structure
+- [DataValuationPlatform](DataValuationPlatform): This folder contains the codebase for the DataValuationPlatform Package. This package allows the easy application of Data Valuation Methods with predefined Data Loader and Model classes as well as implemented applications such as false positive detection, active learning, and undersampling.
+- [Datasets](Datasets): This folder contains the 25 preprocessed datasets used for the false positive detection application and the active learning application as .csv files, split into training and validation set.
+- [Experiments](Experiments): This folder contains all scripts used to generate the results presented in our publication, as well as the results themselves.
+
+
+
 
 ## Features
 - **Data Loading and Preprocessing**: The platform includes a HTS Data Processor that allows easy preprocessing of pubchem datasets. [View Code](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/DataValuationPlatform/models/preprocessor.py)
