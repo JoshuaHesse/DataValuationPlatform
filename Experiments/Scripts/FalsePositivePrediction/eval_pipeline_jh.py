@@ -190,8 +190,8 @@ def main(dataset,
         #if logging is true, create a new folder in the Logs/eval folder called filename to 
         #save all logs of this runthrough
         log_predictions = True
-        if not(os.path.isdir("../../Logs/eval/" + filename)):
-               os.mkdir("../../Logs/eval/" + filename)
+        if not(os.path.isdir("../../../Logs/eval/" + filename)):
+               os.mkdir("../../../Logs/eval/" + filename)
   
           
 
@@ -200,7 +200,7 @@ def main(dataset,
     if dataset != "all":
         dataset_names = [dataset]
     else:
-        dataset_names = os.listdir("../../Datasets")    
+        dataset_names = os.listdir("../../../Datasets")    
         dataset_names = [x for x in dataset_names]
         
         

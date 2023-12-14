@@ -65,7 +65,7 @@ def main(dataset_group,
         tf.config.experimental.set_memory_growth(physical_devices[gpu], True)
         
     #collecting the datasets on which to run the pipeline  
-    datasets = os.listdir("../Datasets_descr_MolData/"+dataset_group)
+    datasets = os.listdir("../../Datasets_descr_MolData/"+dataset_group)
     #removing the suffix to only get the name of the assay ("activity_123456")
     dataset_names = []
     for i in datasets:
@@ -85,7 +85,7 @@ def main(dataset_group,
             print("Analysis of Dataset " + name + " of dataset_group " + dataset_group+ " in replicate " + str(rep))
             db_moldata = pd.read_csv("MolData/Data/all_molecular_data.csv", low_memory = False)
             #import precalc features
-            features_path = "../Datasets_descr_MolData/"+dataset_group+"/" + name + "_ecfp.pkl"
+            features_path = "../../Datasets_descr_MolData/"+dataset_group+"/" + name + "_ecfp.pkl"
             features = pd.read_pickle(features_path)
             features = features.to_numpy()
         

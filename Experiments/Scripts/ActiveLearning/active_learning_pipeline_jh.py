@@ -225,30 +225,30 @@ def main(dataset,
         print(f"[eval]: Processing dataset: {name}")
         
         #a new folder for this dataset is created in the filename folder 
-        if not(os.path.isdir("../Results/" + filename + "/" + name)):
-               os.mkdir("../Results/" + filename + "/" + name)
+        if not(os.path.isdir("../../Results/" + filename + "/" + name)):
+               os.mkdir("../../Results/" + filename + "/" + name)
         
        
         
         #the precalculated ECFP/RDKIT representations for the training set
         #are loaded from the Datasets_descr folder
-        train_path = "../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+        train_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
         x_train = pd.read_pickle(train_path)
         x_train = x_train.to_numpy()
         
         #labels are taken from the Datasets csv file
-        train_df = pd.read_csv("../Datasets/" + name + "/" + name + "_train.csv")
+        train_df = pd.read_csv("../../../Datasets/" + name + "/" + name + "_train.csv")
         y_p_train, y_c_train, y_f_train, idx_train = get_labels(train_df)
         
         
         #the precalculated ECFP/RDKIT representations for the validation set
         #are loaded from the Datasets_descr folder
-        val_path = "../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+        val_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
         x_val = pd.read_pickle(val_path)
         x_val = x_val.to_numpy()
         
         #labels are taken from the Datasets csv file
-        val_df = pd.read_csv("../Datasets/" + name + "/" + name + "_val.csv")
+        val_df = pd.read_csv("../../../Datasets/" + name + "/" + name + "_val.csv")
         y_p_val, y_c_val, y_f_val, idx_val = get_labels(val_df)
     
         
