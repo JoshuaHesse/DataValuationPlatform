@@ -57,6 +57,23 @@ gpcr3_active_learning_mvsa_results = mvsa_model.apply_active_learning(dataset = 
 #importance undersampling
 gpcr3_undersampling_mvsa_results = mvsa_model.apply_undersampling(dataset = dataset_gpcr3, steps = 19)
 ```
+## Experiments
+The files included here are the preprocessing scripts:
+- create the Dataset files from the raw files downloaded from pubchem [cleanup_pipeline](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/cleanup_pipeline_jh.py)
+- create molecular descriptors from Dataset files [descr_export_pipeline_jh](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/descr_export_pipeline_jh.py)
+- create molecular descriptors for the moldata dataset [mol_data_descr_export_pipeline_jh](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/mol_data_descr_export_pipeline_jh.py)
+as well as the scripts and utility files used to perform the experiments shown in the paper
+- [FalsePositivePrediction] (https://github.com/JoshuaHesse/DataValuationPlatform/tree/master/Experiments/Scripts/FalsePositivePrediction) This folder contains the [eval_pipeline](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/FalsePositivePrediction/eval_pipeline_jh.py) used for the false positive prediction application as well as the necessary utility files
+- [ActiveLearning](https://github.com/JoshuaHesse/DataValuationPlatform/tree/master/Experiments/Scripts/ActiveLearning) contains the [active_learning_pipeline](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/ActiveLearning/active_learning_pipeline_jh.py) used for the active learning application as well as the necessary utility files
+- [Undersampling](https://github.com/JoshuaHesse/DataValuationPlatform/tree/master/Experiments/Scripts/Undersampling) contains the [undersampling_pipeline](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/Undersampling/undersampling_pipeline_jh.py) used for the undersampling application and the necessary utility files
+
+### Usage
+In order to reproduce the results, you need to first create the molecular descriptors for the datasets you are interested in using the [descr_export_pipeline_jh](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/descr_export_pipeline_jh.py). 
+```
+cd DataValuationPlatform/Experiments/Scripts
+python3 --dataset all --representation ECFP
+```
+
 
 ### Prerequisites
 The platform currently supports Python 3.8. Some required packages are not included in the pip install: 
