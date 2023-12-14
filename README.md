@@ -27,8 +27,36 @@ The package contains the data valuation models descriped in our manuscript:
 The following tutorial shows how to load some of the datasets included in this repository into a jupyter notebook, calculate molecular descriptors, and use one of the data valuation methods for false positive prediction
 
 ```python
-from DataValuationPlatform import HTSDataPreprocessor, MVSA
-```python
+from DataValuationPlatform import HTSDataPreprocessor, MVSA, TracIn, CatBoost, DVRL
+
+#create a preprocessor object and load the datasets you are interested in (e.g. the preprocessed datasets supplied in this repository by using their names)
+preprocessor = HTSDataPreprocessor(["GPCR_3", "GPCR_2", "GPCR"])
+preprocessor.load_preprocessed_data()
+
+#calculate their molecular descriptors (currently implemented are ECFPs, a set of 208 RDKit descriptors, and SMILES)
+preprocessor.create_descriptors(descriptor_type = "ecfp")
+
+# create dataset objects for each dataset, which contain their train and test sets, molecular descriptors, labels
+dataset_gpcr3 = preprocessor.get_dataset("GPCR_3")
+dataset_gpcr2 = preprocessor.get_dataset("GPCR_2")
+
+#create a data valuation model
+mvsa_model = MVSA()
+
+#you can either use these models just for calculating importance scores for a dataset
+gpcr3_influence_scores = mvsa_model.calculate_influence(dataset_gpcr3)
+
+#or apply one of the applications explained in the paper
+
+#false positive prediction
+gpcr3_false_positives_mvsa_results,gpcr3_mvsa_logs = mvsa_model.apply_false_positive_identification(dataset = dataset_gpcr3, replicates = 3)
+
+#active learning
+gpcr3_active_learning_mvsa_results = mvsa_model.apply_active_learning(dataset = dataset_gpcr3, step_size = 1, steps = 6, regression_function = "gpr", sampling_function = "greedy")
+
+#importance undersampling
+gpcr3_undersampling_mvsa_results = mvsa_model.apply_undersampling(dataset_gpcr3)
+```
 
 ### Prerequisites
 The platform currently supports Python 3.8. Some required packages are not included in the pip install: 
