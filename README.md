@@ -73,8 +73,13 @@ In order to reproduce the results, you need to first create the molecular descri
 cd DataValuationPlatform/Experiments/Scripts
 python3 --dataset all --representation ECFP
 ```
-
-
+####False Positive Prediction
+Here is an example of how to use the [eval_pipeline](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/FalsePositivePrediction/eval_pipeline_jh.py) to test the MVS-A, Tracin, and Catboost false and true positive prediction performance on one dataset, using PAINS fragment filters and the Score method as benchmarks with 5 replicates:
+```
+cd DataValuationPlatform/Experiments/Scripts/FalsePositivePrediction
+python3 eval_pipeline_jh.py --dataset GPCR_3 --knn no --dvrl no --tracin yes --mvs_a yes --catboost yes --score yes --fragment_filter yes --representation ECFP --replicates 5 --filename output --log_predictions yes --environment others
+```
+more information is given in the [FalsePositivePrediction](https://github.com/JoshuaHesse/DataValuationPlatform/tree/master/Experiments/Scripts/FalsePositivePrediction) folder.
 ### Prerequisites
 The platform currently supports Python 3.8. Some required packages are not included in the pip install: 
 - [Tensorflow](https://www.tensorflow.org/) (2.4.0)
