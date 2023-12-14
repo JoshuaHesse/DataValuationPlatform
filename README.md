@@ -80,6 +80,22 @@ cd DataValuationPlatform/Experiments/Scripts/FalsePositivePrediction
 python3 eval_pipeline_jh.py --dataset GPCR_3 --knn no --dvrl no --tracin yes --mvs_a yes --catboost yes --score yes --fragment_filter yes --representation ECFP --replicates 5 --filename output --log_predictions yes --environment others
 ```
 more information is given in the [FalsePositivePrediction](https://github.com/JoshuaHesse/DataValuationPlatform/tree/master/Experiments/Scripts/FalsePositivePrediction) folder.
+
+#### Active Learning
+Here is an example of how to use [active_learning_pipeline](https://github.com/JoshuaHesse/DataValuationPlatform/blob/master/Experiments/Scripts/ActiveLearning/active_learning_pipeline_jh.py) on all using the standard parameters on all datasets
+cd DataValuationPlatform/Experiments/Scripts/ActiveLearning
+python3 active_learning_pipeline_jh.py 
+
+#### Undersampling
+This part of the project was done using the [MolData](https://github.com/LumosBio/MolData) benchmark instead of our curated dataset group. To reproduce this, clone the moldata benchmark into this folder first and calculate the molecular descriptors
+```
+cd DataValuationPlatform/Experiments/Scripts
+git clone https://github.com/LumosBio/MolData
+python3 mol_data_descr_export_pipeline_jh.py --group_type disease --dataset_group aging --representation ECFP
+cd DataValuationPlatform/Experiments/Scripts
+python3 undersampling_pipeline_jh.py --dataset_group aging --influence MVSA --replicates 5
+```
+
 ### Prerequisites
 The platform currently supports Python 3.8. Some required packages are not included in the pip install: 
 - [Tensorflow](https://www.tensorflow.org/) (2.4.0)
