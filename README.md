@@ -55,7 +55,7 @@ gpcr3_false_positives_mvsa_results,gpcr3_mvsa_logs = mvsa_model.apply_false_posi
 gpcr3_active_learning_mvsa_results = mvsa_model.apply_active_learning(dataset = dataset_gpcr3, step_size = 1, steps = 6, regression_function = "gpr", sampling_function = "greedy")
 
 #importance undersampling
-gpcr3_undersampling_mvsa_results = mvsa_model.apply_undersampling(dataset_gpcr3)
+gpcr3_undersampling_mvsa_results = mvsa_model.apply_undersampling(dataset = dataset_gpcr3, steps = 19)
 ```
 
 ### Prerequisites
