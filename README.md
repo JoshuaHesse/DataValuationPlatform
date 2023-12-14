@@ -1,4 +1,3 @@
-
 # Data Valuation Platform
 ![python version](https://img.shields.io/badge/python-v.3.8-blue)
 ![license](https://img.shields.io/badge/license-MIT-orange)
@@ -59,12 +58,6 @@ gpcr3_active_learning_mvsa_results = mvsa_model.apply_active_learning(dataset = 
 gpcr3_undersampling_mvsa_results = mvsa_model.apply_undersampling(dataset = dataset_gpcr3, steps = 19)
 ```
 
-## Experiments
-This folder contains all scripts to create the results shown in the 
-
-
-
-
 ### Prerequisites
 The platform currently supports Python 3.8. Some required packages are not included in the pip install: 
 - [Tensorflow](https://www.tensorflow.org/) (2.4.0)
@@ -74,7 +67,5 @@ The platform currently supports Python 3.8. Some required packages are not inclu
 ### Installation
 The DataValuationPlatform will be installable using pip. Alternatively, you can clone this repository manually. 
 The KNN Shapley model is not available in the pip install package due to incompatibilites with the remaining platform (datascope uses numpy version 1.24.2, the remaining packages uses 1.19.2). 
-
-
 
 
