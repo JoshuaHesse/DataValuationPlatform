@@ -26,8 +26,9 @@ from tensorflow.keras.callbacks import Callback
 
 
 physical_devices = tf.config.list_physical_devices("GPU")
-tf.config.experimental.set_visible_devices(physical_devices[1], "GPU")
-tf.config.experimental.set_memory_growth(physical_devices[1], True)
+if (len(physical_devices) >0):
+    tf.config.experimental.set_visible_devices(physical_devices[0], "GPU")
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 
 #metrics used to fit the model for TracIn

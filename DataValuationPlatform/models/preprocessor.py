@@ -11,6 +11,7 @@ from rdkit import RDLogger
 from rdkit.Chem import rdMolDescriptors
 import logging
 import argparse
+from pathlib import Path
 import sys
 from typing import List
 import os
@@ -21,6 +22,12 @@ from sklearn.preprocessing import StandardScaler
 from DataValuationPlatform.models.utils.utils_jh import *
 from shutil import rmtree
 logging.basicConfig(stream=sys.stdout, level=20)
+
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
+
+
 
 class HTSDataPreprocessor:
     """
@@ -469,13 +476,14 @@ class HTSDataPreprocessor:
         Returns:
             None. Updates the dataset containers with the loaded datasets.
         """
-
+        path_to_datasets = get_project_root()
         for dataset_name in self.dataset_names:
             if dataset_name not in self.datasets:
                 self.datasets[dataset_name] = self.DatasetContainer(dataset_name)
-            self.datasets[dataset_name].training_set = pd.read_csv("../../Datasets/" + dataset_name + "/" + dataset_name + "_train.csv")
-
-            self.datasets[dataset_name].validation_set = pd.read_csv("../../Datasets/" + dataset_name + "/" + dataset_name + "_val.csv")
+            training_path = path_to_datasets / "Datasets" / dataset_name / (dataset_name + "_train.csv")
+            self.datasets[dataset_name].training_set = pd.read_csv(training_path)
+            validation_path = path_to_datasets / "Datasets" / dataset_name / (dataset_name + "_val.csv")
+            self.datasets[dataset_name].validation_set = pd.read_csv(validation_path)
             logging.info(f"Processed datasets loaded successfully for {dataset_name}")
             self.datasets[dataset_name].training_set_labels = self.datasets[dataset_name].training_set["Primary"]
             self.datasets[dataset_name].validation_set_labels = self.datasets[dataset_name].validation_set["Confirmatory"]
