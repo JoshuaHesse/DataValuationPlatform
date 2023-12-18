@@ -1,0 +1,2 @@
+model_checkpoint_path: "active_learning_dvrl_model.ckpt"
+all_model_checkpoint_paths: "active_learning_dvrl_model.ckpt"

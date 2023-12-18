@@ -15,9 +15,9 @@ import time
 #tensorflow and dvrl arent present in the datascope environment,
 #and would throw errors otherwhise
 try:    
-    import dvrl
-    import tensorflow.compat.v1 as tf1
-except ImportError:
+    from dvrl import Dvrl
+    import tensorflow as tf
+except ImportError as e:
     warnings.warn('DVRL failed to import', ImportWarning)
 import lightgbm
 
@@ -38,14 +38,14 @@ def influences_dvrl(
     parameters['comb_dim'] = 10
     #standard is 2000 iterations -> down to 1000 to lower time
     parameters['iterations'] = 1000
-    parameters['activation'] = tf1.nn.relu
+    parameters['activation'] = tf.nn.relu
     parameters['layer_number'] = 5
     #standard is 2000 for batch size, increased to 5000 as otherwhise sometimes
     #there is only one class in the batch - causing DVRL to break
     parameters['batch_size'] = 5000
     parameters['learning_rate'] = 0.01
     
-    tf1.reset_default_graph()
+ 
     #set timer to determine time per iteration
     start = time.time()
     
@@ -61,7 +61,7 @@ def influences_dvrl(
     flags = {'sgd': False, 'pretrain': False}
 
     # Initalizes DVRL: x_val and y_val are the confirmatory datapoints
-    dvrl_class = dvrl.Dvrl(x_train, y_train, x_val, y_val, 
+    dvrl_class = Dvrl(x_train, y_train, x_val, y_val, 
                            problem, pred_model, parameters, checkpoint_file_name, flags)
 
     # Trains DVRL

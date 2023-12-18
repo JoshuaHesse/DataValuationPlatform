@@ -14,11 +14,10 @@ import numpy as np
 from utils_jh import process_ranking, bedroc_score, enrichment_factor_score, get_scaffold_rate, run_logger, get_labels, get_labels_val
 from sklearn.metrics import precision_score
 import lightgbm
-import dvrl
+from dvrl import Dvrl
 from typing import Tuple
 import time
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+import tensorflow as tf
 from rdkit import Chem
 
 def run_dvrl( 
@@ -68,10 +67,10 @@ def run_dvrl(
     #loading in the molecular representations according to the "representation
     #argument; molecular representations were calculated and stored via the 
     #"descr_export_pipeline_jh.py
-    train_path = "../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+    train_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
     x_train = pd.read_pickle(train_path)
     x_train = x_train.to_numpy()
-    val_path = "../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+    val_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
     x_val = pd.read_pickle(val_path)
     x_val = x_val.to_numpy()
     
@@ -117,7 +116,6 @@ def run_dvrl(
     print("Beginning calculations")
     #iteratively train and measure importances according to number of replicates
     for i in range(replicates):
-        tf.reset_default_graph()
         #set timer to determine time per iteration
         start = time.time()
         
@@ -143,7 +141,7 @@ def run_dvrl(
         flags = {'sgd': False, 'pretrain': False}
 
         # Initalizes DVRL: x_val and y_val are the confirmatory datapoints
-        dvrl_class = dvrl.Dvrl(x_train, y_train, x_val, y_val, 
+        dvrl_class = Dvrl(x_train, y_train, x_val, y_val, 
                                problem, pred_model, parameters, checkpoint_file_name, flags)
 
         # Trains DVRL using the metric specified in brackets

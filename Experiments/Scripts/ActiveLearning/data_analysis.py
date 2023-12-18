@@ -113,7 +113,7 @@ def plot_learning(combined_names: List[str],
     plt.title("Active learning influence vs greedy on " + name)
     plt.legend(loc='upper left')
 
-    path = "../Results/" + filename + "/" + name + "/" + influence + ".png"
+    path = "../../Results/ActiveLearning/" + filename + "/" + name + "/" + influence + ".png"
     print("----------------------")
     print("[eval]: Results saved in " + path)
 
@@ -223,7 +223,7 @@ def plot_learning_bands(combined_names: List[str],
     plt.title("Active learning influence vs greedy on " + name)
     plt.legend(loc='upper left')
 
-    path = "../Results/" + filename + "/" + name + "/" + influence + "_bands.png"
+    path = "../../Results/ActiveLearning/" + filename + "/" + name + "/" + influence + "_bands.png"
     print("----------------------")
     print("[eval]: Results saved in " + path)
 
@@ -332,7 +332,7 @@ def save_data(combined_names: List[str],
 
 # Do the same for summary_times
 
-   path = "../Results/" + filename + "/" + name + "/" + influence + ".csv"
+   path = "../../Results/ActiveLearning/" + filename + "/" + name + "/" + influence + ".csv"
    #save final dataframe in the filename folder set in the pipeline´
    summary.to_csv(path)
    print("[eval]: Results saved in " + path)
@@ -345,7 +345,7 @@ def save_data(combined_names: List[str],
        times_replicates.append(pd.DataFrame(tmp, index = [0]))
    summary_times = pd.concat([pd.concat([df, empty_df]) for df in times_replicates])
  
-   path = "../Results/" + filename + "/" + name + "/" + influence + "_time.csv"
+   path = "../../Results/ActiveLearning/" + filename + "/" + name + "/" + influence + "_time.csv"
    #save dataframe in the filename folder set in the pipeline´
    summary_times.to_csv(path)
    print("[eval]: Results saved in " + path)
@@ -661,7 +661,7 @@ def combined_plot_time(score_dataframe, pains_dataframe, method_dataframe_list, 
     plt.tight_layout()
     # Place the legend outside plot area, above
     fig.legend(legend_handles, names, loc='upper center', ncol=len(names), bbox_to_anchor=(0.5, 1.05))
-    path = "../Results/images/" + filename + ".png"
+    path = "../../Results/ActiveLearning/" + filename + ".png"
     plt.savefig(path, dpi=300, bbox_inches='tight')
     plt.show()
 

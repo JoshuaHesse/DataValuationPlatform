@@ -559,9 +559,9 @@ def save_results_without_replicates(
                 ]
     
     #creates new folder in the Results folder for this set of results
-    if not(os.path.isdir("../../Results/" + filename)):
-        os.mkdir("../../Results/" + filename)
-    prefix = "../../Results/" + filename + "/"
+    if not(os.path.isdir("../../Results/FalsePositivePrediction/" + filename)):
+        os.mkdir("../../Results/FalsePositivePrediction/" + filename)
+    prefix = "../../Results/FalsePositivePrediction/" + filename + "/"
     suffix = ".csv"
     algorithm = ["score_", "filter_" + filter_type + "_"]
     
@@ -694,10 +694,10 @@ def save_results(
         column_names.append("TP Scaffold - Replicate {0}".format(j+1))
     
     #creates new folder in the Results folder for this set of results
-    if not(os.path.isdir("../../Results/" + filename)):
-           os.mkdir("../../Results/" + filename)
+    if not(os.path.isdir("../../Results/FalsePositivePrediction/" + filename)):
+           os.mkdir("../../Results/FalsePositivePrediction/" + filename)
 
-    prefix = "../../Results/" + filename + "/"
+    prefix = "../../Results/FalsePositivePrediction/" + filename + "/"
     suffix = ".csv"
     algorithm = ["mvsa_", "catboost_self","catboost_test", "knn_", "dvrl_", "tracin_", "tracin_pos_", "tracin_self_"]
     

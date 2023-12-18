@@ -24,7 +24,7 @@ try:
     from gpflow.mean_functions import Constant
     from gpflow.utilities import print_summary
     from regression_utils import build_and_compile_model
-except ImportError:
+except ImportError as e:
     warnings.warn('GP_flow and co failed to import', ImportWarning)
 
 

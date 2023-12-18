@@ -140,7 +140,9 @@ if args.environment.lower() == "others":
         from run_score import *
         from run_filter import *
         from influence_catboost import *
-    except ImportError:
+        from influence_dvrl import run_dvrl
+    except ImportError as e:
+        print("import Error:",e)
         warnings.warn('TracIn evals_tracin failed to import', ImportWarning)
 
 elif args.environment.lower() == "dvrl":
@@ -179,8 +181,9 @@ def main(dataset,
     if environment == "others":
         
         physical_devices = tf.config.list_physical_devices("GPU")
-        tf.config.experimental.set_visible_devices(physical_devices[0], "GPU")
-        tf.config.experimental.set_memory_growth(physical_devices[0], True)
+        if(len(physical_devices) > 0):
+            tf.config.experimental.set_visible_devices(physical_devices[0], "GPU")
+            tf.config.experimental.set_memory_growth(physical_devices[0], True)
     
 
     #turn log_predictions into boolean, then check if it is compatible with other params
@@ -190,8 +193,8 @@ def main(dataset,
         #if logging is true, create a new folder in the Logs/eval folder called filename to 
         #save all logs of this runthrough
         log_predictions = True
-        if not(os.path.isdir("../../../Logs/eval/" + filename)):
-               os.mkdir("../../../Logs/eval/" + filename)
+        if not(os.path.isdir("../../Logs/FalsePositivePrediction/" + filename)):
+               os.mkdir("../../Logs/FalsePositivePrediction/" + filename)
   
           
 
@@ -238,8 +241,8 @@ def main(dataset,
         print(f"[eval]: Processing dataset: {name}")
         #the smiles and activity labels are imported from the datasets folder
         #the files are stored in dataframes (df)
-        df_train = pd.read_csv("../../Datasets/" + name + "/" + name + "_train.csv")
-        df_val = pd.read_csv("../../Datasets/" + name + "/" + name + "_val.csv")
+        df_train = pd.read_csv("../../../Datasets/" + name + "/" + name + "_train.csv")
+        df_val = pd.read_csv("../../../Datasets/" + name + "/" + name + "_val.csv")
         
         mols_train = list(df_train["SMILES"])
         mols_train = [Chem.MolFromSmiles(x) for x in mols_train]
@@ -250,8 +253,8 @@ def main(dataset,
         #the features (x_train/val), either rdkit or ecfp, were precalculated for consistancy
         #and speed, and are imported from the Datasets_descr folder
         if representation != "smiles":
-            train_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
-            val_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+            train_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+            val_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
         
         
             x_train = pd.read_pickle(train_path)
@@ -383,7 +386,7 @@ def main(dataset,
                     df2_last_three_columns = log_list[i].iloc[:, -3:]
                     logs = pd.concat([logs, df2_last_three_columns], axis=1)
  
-            logpath = "../../Logs/eval/" + filename + "/" + filename + "_" + name + "_" + representation + ".csv"
+            logpath = "../../Logs/FalsePositivePrediction/" + filename + "/" + filename + "_" + name + "_" + representation + ".csv"
             
             logs.to_csv(logpath)
             print(f"[eval]: Log saved at {logpath}")
@@ -409,7 +412,7 @@ def main(dataset,
         filter_type
         )
     print("----------------------")
-    print("[eval]: Results saved in ../../Results/" + filename + "/*_" + filename + "_" + representation + ".csv")
+    print("[eval]: Results saved in ../../Results/FalsePositivePrediction/" + filename + "/*_" + filename + "_" + representation + ".csv")
     
     
     

@@ -378,10 +378,10 @@ def run_tracin_importance(
     #loading in the molecular representations according to the "representation
     #argument; molecular representations were calculated and stored via the 
     #"descr_export_pipeline_jh.py
-    train_path = "../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+    train_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
     x_train = pd.read_pickle(train_path)
     x_train = x_train.to_numpy()
-    val_path = "../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+    val_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
     x_val = pd.read_pickle(val_path)
     x_val = x_val.to_numpy()
     

@@ -65,7 +65,7 @@ def main(dataset_group,
         tf.config.experimental.set_memory_growth(physical_devices[gpu], True)
         
     #collecting the datasets on which to run the pipeline  
-    datasets = os.listdir("../../Datasets_descr_MolData/"+dataset_group)
+    datasets = os.listdir("../../../Datasets_descr_MolData/"+dataset_group)
     #removing the suffix to only get the name of the assay ("activity_123456")
     dataset_names = []
     for i in datasets:
@@ -167,7 +167,7 @@ def main(dataset_group,
           
         #export the results all into 1 .csv file, containing the performances of
         #all models, as well as the number of 
-        name = "../Results/"+filename +"_" + str(rep) + ".csv"
+        name = "../../Results/Undersampling/"+filename +"_" + str(rep) + ".csv"
         with open(name, 'w') as file:
             for i, df in enumerate(dataframe_list):
                 file.write(dataset_names[i]+'\n')

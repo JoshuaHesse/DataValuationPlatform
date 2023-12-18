@@ -252,6 +252,7 @@ class Dvrl(object):
         with tf.GradientTape() as tape:
             # Generate selection probability
             est_dv_curr = est_data_value([x_batch, y_batch_onehot, y_hat_batch], training=True)
+           
             self.s_input = np.random.binomial(1, est_dv_curr, est_dv_curr.shape)
             # Compute generator loss
             dve_loss = self.compute_generator_loss(est_dv_curr)

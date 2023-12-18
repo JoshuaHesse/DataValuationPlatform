@@ -142,11 +142,7 @@ parser.add_argument('--filename', default="output",
 args = parser.parse_args()
 
 try:
-    if args.influence.lower() != "dvrl":
-        import tensorflow as tf
-    else:
-        import tensorflow.compat.v1 as tf
-        tf.disable_v2_behavior()
+    import tensorflow as tf
 except ImportError:
     warnings.warn('Tensorflow failed to import', ImportWarning)
 
@@ -163,27 +159,26 @@ def main(dataset,
     #GPU setting. This has to be done in the tracin_utils.py file as well,
     #setting the same GPU (e.i. both 0 or both 1)!
     #when in the datascope environment, tensorflow is not available -> Error
-    try:
-        physical_devices = tf.config.list_physical_devices("GPU")
+    
+    physical_devices = tf.config.list_physical_devices("GPU")
+    if len(physical_devices) > 0:    
         tf.config.experimental.set_visible_devices(physical_devices[0], "GPU")
         tf.config.experimental.set_memory_growth(physical_devices[0], True)
-    except NameError:
-        warnings.warn('GPU failed to set')
         
     #if a specific dataset is given in the args, it is set here. Otherwhise,
     #all datasets in the datasets folder are used
     if dataset != "all":
         dataset_names = [dataset]
     else:
-        dataset_names = os.listdir("../Datasets")    
+        dataset_names = os.listdir("../../Datasets")    
         dataset_names = [x for x in dataset_names]
         
    
     
     #in the results folder a new folder in created with the filename.
     #this folder will be filled with 1 png and 2 csv files per dataset    
-    if not(os.path.isdir("../Results/" + filename)):
-           os.mkdir("../Results/" + filename)
+    if not(os.path.isdir("../../Results/ActiveLearning/" + filename)):
+           os.mkdir("../../Results/ActiveLearning/" + filename)
     
         
     #influence function according to args
@@ -225,14 +220,14 @@ def main(dataset,
         print(f"[eval]: Processing dataset: {name}")
         
         #a new folder for this dataset is created in the filename folder 
-        if not(os.path.isdir("../../Results/" + filename + "/" + name)):
-               os.mkdir("../../Results/" + filename + "/" + name)
+        if not(os.path.isdir("../../Results/ActiveLearning/" + filename + "/" + name)):
+               os.mkdir("../../Results/ActiveLearning/" + filename + "/" + name)
         
        
         
         #the precalculated ECFP/RDKIT representations for the training set
         #are loaded from the Datasets_descr folder
-        train_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+        train_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
         x_train = pd.read_pickle(train_path)
         x_train = x_train.to_numpy()
         
@@ -243,7 +238,7 @@ def main(dataset,
         
         #the precalculated ECFP/RDKIT representations for the validation set
         #are loaded from the Datasets_descr folder
-        val_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+        val_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
         x_val = pd.read_pickle(val_path)
         x_val = x_val.to_numpy()
         
