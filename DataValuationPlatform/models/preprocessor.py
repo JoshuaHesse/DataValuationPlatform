@@ -70,7 +70,9 @@ class HTSDataPreprocessor:
             logging.error("Please enter the dataset names as a list, even for single datasets. Example: [GPCR_3]")
         self.dataset_names = dataset_names
         self.datasets = {}
-        self.metadata = pd.read_csv("../Logs/dataset_metadata.csv")[["Codename", "Primary  HTS AID", "Confirmatory HTS AID"]]
+        path_to_root = get_project_root()
+        log_path = path_to_root / "Logs" / "dataset_metadata.csv"
+        self.metadata = pd.read_csv(log_path)[["Codename", "Primary  HTS AID", "Confirmatory HTS AID"]]
         self.validation_split = validation_split
 
     class DatasetContainer:

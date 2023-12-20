@@ -417,7 +417,7 @@ class Model:
                 idx_rest_sorted = np.argsort(predictions, axis= 0) 
                 
             #add the new samples to the batch of screened samples and remove them from the remaining dataset
-            top_idx.append(idx_rest_sorted[:min(len(rest_dataset.training_set_labels), int(len(dataset.training_set_labels) / (100/step_size)))].tolist())
+            top_idx.append(idx_rest_sorted[:min(len(rest_dataset.training_set_labels), int(len(dataset.training_set_labels) / (100/step_size)))].ravel().tolist())
             if i == 0:
                 actives_found.append(np.sum(sampled_dataset.training_set_labels))
             sampled_dataset.training_set_descriptors = np.concatenate([sampled_dataset.training_set_descriptors, rest_dataset.training_set_descriptors[top_idx[i]]])
