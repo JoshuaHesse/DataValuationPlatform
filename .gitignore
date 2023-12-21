@@ -3,5 +3,8 @@ dist/
 *.egg-info/
 *.pyc
 __pycache__/
-.pytest_cache/
+**/.pytest_cache/
 README_PyPI.md
+**/.ipynb_checkpoints/
+DataValuationPlatform-0.2/
+MANIFEST.in
