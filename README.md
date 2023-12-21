@@ -25,9 +25,43 @@ The package contains the data valuation models descriped in our manuscript:
 
 ### Tutorial
 The following tutorial shows how to load some of the datasets included in this repository into a jupyter notebook, calculate molecular descriptors, and use one of the data valuation methods for false positive prediction
+#### Dataset Loading
+```python
+#1. you can load the preinstalled datasets used in this publication via names
+preprocessor = HTSDataPreprocessor(["GPCR_3", "GPCR_2", "GPCR"])
+preprocessor.load_preprocessed_data()
+preprocessor.create_descriptors(descriptor_type = "ecfp")
 
+dataset_gpcr3 = preprocessor.get_dataset("GPCR_3")
+dataset_gpcr2 = preprocessor.get_dataset("GPCR_2")
+dataset_gpcr = preprocessor.get_dataset("GPCR_")
+
+#2. You can add pubchem assay combinations that combine a primary and a confirmatory assay by downloading the raw files and adding
+#the dataset to the existing collection (here example with made up aids)
+preprocessor = HTSDataPreprocessor([])
+preprocessor.add_dataset_by_AID(codename = "MadeUpAssayName", primary_AID = "001",confirmatory_AID= "002")
+preprocessor.add_dataset_by_AID(codename = "MadeUpAssayName2", primary_AID = "003",confirmatory_AID= "004")
+preprocessor.preprocess_data(path_to_raw="Path/To/Raw_data/")
+preprocessor.create_descriptors("ecfp")
+
+dataset_MadeUpAssayName = preprocessor.get_dataset("MadeUpAssayName")
+dataset_MadeUpAssayName2 = preprocessor.get_dataset("MadeUpAssayName2")
+
+3. you can add your own data directly as a custom dataset:
+preprocessor = HTSDataPreprocessor([])
+preprocessor.create_custom_dataset(
+    dataset_name = CustomDataset,
+    training_set_smiles=train_smiles,
+    training_set_labels=train_labels,
+    training_set_confirmatory_labels=train_confirmatory_labels) #this is only necessary for the false positive identification
+preprocessor.create_descriptors("ecfp")
+
+datasetCustomDataset = preprocessor.get_dataset("CustomDataset")
+```
+#### Model usage
 ```python
 from DataValuationPlatform import HTSDataPreprocessor, MVSA, TracIn, CatBoost, DVRL
+
 
 #create a preprocessor object and load the datasets you are interested in (e.g. the preprocessed datasets supplied in this repository by using their names)
 preprocessor = HTSDataPreprocessor(["GPCR_3", "GPCR_2", "GPCR"])

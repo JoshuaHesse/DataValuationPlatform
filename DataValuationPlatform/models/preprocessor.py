@@ -19,6 +19,7 @@ import numpy as np
 from chembl_structure_pipeline import standardizer
 import math
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 from DataValuationPlatform.models.utils.utils_jh import *
 from shutil import rmtree
 logging.basicConfig(stream=sys.stdout, level=20)
@@ -72,7 +73,7 @@ class HTSDataPreprocessor:
         self.datasets = {}
         path_to_root = get_project_root()
         log_path = path_to_root / "Logs" / "dataset_metadata.csv"
-        self.metadata = pd.read_csv(log_path)[["Codename", "Primary  HTS AID", "Confirmatory HTS AID"]]
+        self.metadata = pd.read_csv(log_path)[["Codename", "Primary HTS AID", "Confirmatory HTS AID"]]
         self.validation_split = validation_split
 
     class DatasetContainer:
@@ -104,9 +105,104 @@ class HTSDataPreprocessor:
             self.validation_set_labels = {}
             self.representation = None
 
+    def create_custom_dataset(
+            self,
+            dataset_name: str,
+            training_set_smiles: List[str],
+            training_set_labels,
+            training_set_confirmatory_labels=None,
+            validation_set_smiles: List[str] = None,
+            validation_set_labels = None,
+            validation_split: float = None,
+            training_set_descriptors = None,
+            validation_set_descriptors = None):
+        """
+        Creates and adds a custom dataset to the HTSDataPreprocessor. This function allows users to input their own data, 
+         including SMILES strings, corresponding labels, and optionally confirmatory labels for the training set. 
+         If a validation set is not provided, the function splits the training set into training and validation sets 
+         while maintaining a similar ratio of active to inactive samples.
+        
+         Parameters:
+         - dataset_name (str): Name of the new dataset.
+         - training_set_smiles (List[str]): List of SMILES strings for the training set.
+         - training_set_labels: Labels corresponding to the training set SMILES strings.
+         - training_set_confirmatory_labels (optional): Confirmatory labels for the training set. Defaults to None.
+         - validation_set_smiles (List[str], optional): List of SMILES strings for the validation set. Defaults to None.
+         - validation_set_labels (optional): Labels corresponding to the validation set SMILES strings. Defaults to None.
+         - validation_split (float, optional): Proportion of the training set to be used as validation set if no validation set is provided. Defaults to None.
+         - training_set_descriptors (optional): Descriptors corresponding to the training set SMILES strings. Defaults to None.
+         - validation_set_descriptors (optional): Descriptors corresponding to the validation set SMILES strings. Defaults to None.
+        
+         Returns:
+         None. The function updates the internal state of the HTSDataPreprocessor instance by adding the new custom dataset.
+         
+    
+         Note: If confirmatory labels are supplied for the training set and no validation set is provided, 
+         the validation set is created using only samples with confirmatory labels. The size of the validation 
+         set is determined by the validation_split ratio applied to the number of samples with confirmatory labels.
+        """
+        # Create or get existing dataset container and add dataset name to the list
+        if dataset_name not in self.datasets:
+            self.datasets[dataset_name] = self.DatasetContainer(dataset_name)
+            self.dataset_names.append(dataset_name)
+    
+        # Initialize training dataset with optional confirmatory labels
+        training_data = {'SMILES': training_set_smiles, 'Primary': training_set_labels}
+        if training_set_confirmatory_labels is not None:
+            training_data['Confirmatory'] = training_set_confirmatory_labels
+        self.datasets[dataset_name].training_set = pd.DataFrame(training_data)
+    
+        # Set training set descriptors if provided
+        if training_set_descriptors is not None:
+            self.datasets[dataset_name].training_set_descriptors = training_set_descriptors
+    
+        # Handle validation set
+        if validation_set_smiles is not None and validation_set_labels is not None:
+            # User provided custom validation set
+            self.datasets[dataset_name].validation_set = pd.DataFrame({'SMILES': validation_set_smiles, 'Confirmatory': validation_set_labels})
+            if validation_set_descriptors is not None:
+                self.datasets[dataset_name].validation_set_descriptors = validation_set_descriptors
+        else:
+            # Create validation set from samples with confirmatory labels if provided
+            if validation_split is None:
+                validation_split = self.validation_split
+    
+            if training_set_confirmatory_labels is not None:
+                # Filter dataset to include only samples with confirmatory labels
+                confirmatory_data = self.datasets[dataset_name].training_set.dropna(subset=['Confirmatory'])
+                val_size = int(len(confirmatory_data) * validation_split)
+                train_indices, val_indices = train_test_split(
+                    confirmatory_data.index, 
+                    test_size=val_size, 
+                    stratify=confirmatory_data['Confirmatory'])
+    
+                self.datasets[dataset_name].validation_set = self.datasets[dataset_name].training_set.loc[val_indices].reset_index(drop=True)
+                self.datasets[dataset_name].training_set = self.datasets[dataset_name].training_set.loc[train_indices].reset_index(drop=True)
+            else:
+                # Standard split when no confirmatory labels are provided
+                train_indices, val_indices = train_test_split(
+                    range(len(self.datasets[dataset_name].training_set)), 
+                    test_size=validation_split, 
+                    stratify=training_set_labels)
+    
+                self.datasets[dataset_name].validation_set = self.datasets[dataset_name].training_set.iloc[val_indices].reset_index(drop=True)
+                self.datasets[dataset_name].training_set = self.datasets[dataset_name].training_set.iloc[train_indices].reset_index(drop=True)
+                self.datasets[dataset_name].validation_set.rename(columns={'Primary': 'Confirmatory'}, inplace=True)
+
+             # Resetting training and validation set labels
+            self.datasets[dataset_name].training_set_labels = self.datasets[dataset_name].training_set['Primary']
+            self.datasets[dataset_name].validation_set_labels = self.datasets[dataset_name].validation_set['Confirmatory']
+           
+            # Splitting descriptors if provided
+            if training_set_descriptors is not None:
+                self.datasets[dataset_name].validation_set_descriptors = training_set_descriptors[val_indices]
+                self.datasets[dataset_name].training_set_descriptors = training_set_descriptors[train_indices]
+
+        
     def load_data(
             self, 
-            dataset_name: str
+            dataset_name: str,
+            path_to_raw: str,
             ):
         """
         Loads the primary and confirmatory data for a given dataset from the metadata file.
@@ -121,30 +217,49 @@ class HTSDataPreprocessor:
         try:
             if dataset_name not in self.datasets:
                 self.datasets[dataset_name] = self.DatasetContainer(dataset_name)
-            
-            #some datasets used specific scores, and were therefore safed in a different folder
-            if dataset_name in ["GPCR_3", "ion_channel_2", "RNA_binding", "fatty_acid", "trancsription_3"]:
-                aids = self.metadata[self.metadata['Codename'] == dataset_name][["Primary  HTS AID", "Confirmatory HTS AID"]].values[0]
-                if len(aids) != 2:
-                    raise ValueError("Expected exactly 2 AIDs for the dataset.")
-
-                filename_1 = f"../Raw_data_bscores/AID_{str(aids[0])}_datatable_all.csv"
-                filename_2 = f"../Raw_data_bscores/AID_{str(aids[1])}_datatable_all.csv"
-                self.datasets[dataset_name].data_1 = pd.read_csv(filename_1, low_memory=False)
-                self.datasets[dataset_name].data_2 = pd.read_csv(filename_2, low_memory=False)
-                logging.info(f"Datasets loaded successfully for {dataset_name}")
-            else:
-                aids = self.metadata[self.metadata['Codename'] == dataset_name][["Primary  HTS AID", "Confirmatory HTS AID"]].values[0]
-                if len(aids) != 2:
-                    raise ValueError("Expected exactly 2 AIDs for the dataset.")
-                filename_1 = f"../Raw_data/AID_{str(aids[0])}_datatable_all.csv"
-                filename_2 = f"../Raw_data/AID_{str(aids[1])}_datatable_all.csv"
-                self.datasets[dataset_name].data_1 = pd.read_csv(filename_1, low_memory=False)
-                self.datasets[dataset_name].data_2 = pd.read_csv(filename_2, low_memory=False)
-                logging.info(f"Datasets loaded successfully for {dataset_name}")
+            aids = self.metadata[self.metadata['Codename'] == dataset_name][["Primary HTS AID", "Confirmatory HTS AID"]].values[0]
+            if len(aids) != 2:
+                raise ValueError("Expected exactly 2 AIDs for the dataset.")
+            filename_1 = path_to_raw + f"AID_{str(aids[0])}_datatable_all.csv"
+            filename_2 = path_to_raw + f"/AID_{str(aids[1])}_datatable_all.csv"
+            self.datasets[dataset_name].data_1 = pd.read_csv(filename_1, low_memory=False)
+            self.datasets[dataset_name].data_2 = pd.read_csv(filename_2, low_memory=False)
+            logging.info(f"Datasets loaded successfully for {dataset_name}")
         except Exception as e:
             logging.error(f"An error occurred while loading the datasets for {dataset_name}: {e}")
             sys.exit(1)
+
+    def add_dataset_by_AID(
+            self, 
+            codename: str,
+            primary_AID: str,
+            confirmatory_AID: str):
+        """
+        Adds a new dataset to the HTSDataPreprocessor by specifying two Assay IDs (AIDs) and a codename. 
+        This method appends these details to the metadata file and updates the internal dataset collection.
+    
+        Parameters:
+        - codename (str): The codename for the new dataset.
+        - primary_AID (str): The AID for the primary assay.
+        - confirmatory_AID (str): The AID for the confirmatory assay.
+    
+        The method updates the metadata file with the new dataset details and then loads the data based on the provided AIDs.
+    
+        Returns:
+        None. The metadata file is updated, and the new dataset is loaded into the HTSDataPreprocessor instance.
+        """
+        # Append new dataset information to the metadata file
+        new_metadata = pd.DataFrame({
+        "Codename": [codename],
+        "Primary HTS AID": [primary_AID],
+        "Confirmatory HTS AID": [confirmatory_AID]})
+        current_metadata = self.metadata
+        self.metadata = pd.concat([current_metadata, new_metadata], ignore_index=True)
+        if codename not in self.datasets:
+                self.datasets[codename] = self.DatasetContainer(codename)
+                self.dataset_names.append(codename)
+        
+        
 
 
     @staticmethod
@@ -209,10 +324,10 @@ class HTSDataPreprocessor:
             db_1 = pd.DataFrame({"SMILES": smiles_1, "Primary":act_1, "Score":score_1})
             db_1 = db_1.groupby(["SMILES"], as_index=False).mean()
             db_1["Primary"] = db_1["Primary"].apply(HTSDataPreprocessor.process_duplicates)
-            logging.info("Primary data cleaning done successfully.")
+            print("Primary data cleaning done successfully.")
             return db_1
         else:
-            logging.error("Data not loaded. Please load data before cleaning.")
+            print("Data not loaded. Please load data before cleaning.")
             return None
 
     def clean_confirmatory_data(
@@ -254,10 +369,10 @@ class HTSDataPreprocessor:
             db_2 = pd.DataFrame({"SMILES": smiles_2, "Confirmatory":act_2})
             db_2 = db_2.groupby(["SMILES"], as_index=False).mean()
             db_2["Confirmatory"] = db_2["Confirmatory"].apply(HTSDataPreprocessor.process_duplicates)
-            logging.info("Confirmatory data cleaning done successfully.")
+            print("Confirmatory data cleaning done successfully.")
             return db_2
         else:
-            logging.error("Data not loaded. Please load data before cleaning.")
+            print("Data not loaded. Please load data before cleaning.")
             return None
 
 
@@ -279,9 +394,9 @@ class HTSDataPreprocessor:
             self.datasets[dataset_name].combined_data["Mols"] = [Chem.MolFromSmiles(x) for x in list(self.datasets[dataset_name].combined_data["SMILES"])]
             self.datasets[dataset_name].combined_data.dropna(inplace=True, subset=["Mols"])
             self.datasets[dataset_name].combined_data.drop(["Mols"], inplace=True, axis=1)
-            logging.info("Datasets combined successfully.")
+            print("Datasets combined successfully.")
         else:
-            logging.error("Data not loaded. Please load both datasets before combining.")
+            print("Data not loaded. Please load both datasets before combining.")
 
 
     def split_datasets(
@@ -363,7 +478,7 @@ class HTSDataPreprocessor:
         else:
             logging.error("Data not loaded. Please load both datasets before combining.")
 
-    def preprocess_data(self):
+    def preprocess_data(self, path_to_raw: str):
         """
         Executes the complete preprocessing pipeline for all datasets given to the preprocessor.
         
@@ -374,8 +489,9 @@ class HTSDataPreprocessor:
             None. Processes and updates each dataset in the dataset_names attribute.
         """
         for dataset_name in self.dataset_names:
+            print("Preprocessing: " + dataset_name)
             #load the raw data downloaded from pubchem and stored in the Raw_Data folder
-            self.load_data(dataset_name)
+            self.load_data(dataset_name, path_to_raw)
             lg = RDLogger.logger()
             lg.setLevel(RDLogger.CRITICAL)
             #cleaning of primary and confirmatory datasets
@@ -389,7 +505,7 @@ class HTSDataPreprocessor:
             #saves activity labels as training and validation set labels in the repsective DatasetContainer
             self.datasets[dataset_name].training_set_labels = self.datasets[dataset_name].training_set_labels
             self.datasets[dataset_name].validation_set_labels = self.datasets[dataset_name].validation_set_labels
-            logging.info(f"Preprocessing completed successfully for {dataset_name}.")
+            print(f"Preprocessing completed successfully for {dataset_name}.")
 
     def save_data(
             self, 
@@ -435,7 +551,7 @@ class HTSDataPreprocessor:
                 for dataset_name in self.dataset_names:
                     self.datasets[dataset_name].training_set_descriptors = self.datasets[dataset_name].training_set["SMILES"]
                     self.validation_set_descriptors[dataset_name] = self.datasets[dataset_name].validation_set["SMILES"]
-                    logging.info(f"SMILES created successfully for {dataset_name}")
+                    print(f"SMILES created successfully for {dataset_name}")
                     self.datasets[dataset_name].representation = "smiles"
             elif descriptor_type.lower() == "ecfp":
                 #ECFPs are calculated and set in the datasetContainer as descriptors 
@@ -447,7 +563,7 @@ class HTSDataPreprocessor:
                     mols_val = self.datasets[dataset_name].validation_set["SMILES"]
                     mols_val = [Chem.MolFromSmiles(x) for x in mols_val]
                     self.datasets[dataset_name].validation_set_descriptors = get_ECFP(mols_val)
-                    logging.info(f"ECFPs created successfully for {dataset_name}")
+                    print(f"ECFPs created successfully for {dataset_name}")
                     self.datasets[dataset_name].representation = "ecfp"
             elif descriptor_type.lower() == "rdkit":
                 #a collection of 208 RDKit descriptors are calculated and set in the datasetContainer as descriptors 
@@ -466,9 +582,9 @@ class HTSDataPreprocessor:
                     self.datasets[dataset_name].training_set_descriptors = scaler.transform(rdkit_train)
                     self.datasets[dataset_name].validation_set_descriptors = scaler.transform(rdkit_val)
                     self.datasets[dataset_name].representation = "rdkit"
-                    logging.info(f"RDkit Descriptors created successfully for {dataset_name}")
+                    print(f"RDkit Descriptors created successfully for {dataset_name}")
 
-    def load_preprocessed_data(self):
+    def load_preprocessed_data(self, path_to_descriptors: str = None):
         """
         Loads preprocessed training and validation datasets from CSV files.
         
@@ -478,15 +594,16 @@ class HTSDataPreprocessor:
         Returns:
             None. Updates the dataset containers with the loaded datasets.
         """
-        path_to_datasets = get_project_root()
+        if path_to_descriptors == None:
+            path_to_descriptors = get_project_root()
         for dataset_name in self.dataset_names:
             if dataset_name not in self.datasets:
                 self.datasets[dataset_name] = self.DatasetContainer(dataset_name)
-            training_path = path_to_datasets / "Datasets" / dataset_name / (dataset_name + "_train.csv")
+            training_path = path_to_descriptors / "Datasets" / dataset_name / (dataset_name + "_train.csv")
             self.datasets[dataset_name].training_set = pd.read_csv(training_path)
-            validation_path = path_to_datasets / "Datasets" / dataset_name / (dataset_name + "_val.csv")
+            validation_path = path_to_descriptors / "Datasets" / dataset_name / (dataset_name + "_val.csv")
             self.datasets[dataset_name].validation_set = pd.read_csv(validation_path)
-            logging.info(f"Processed datasets loaded successfully for {dataset_name}")
+            print(f"Processed datasets loaded successfully for {dataset_name}")
             self.datasets[dataset_name].training_set_labels = self.datasets[dataset_name].training_set["Primary"]
             self.datasets[dataset_name].validation_set_labels = self.datasets[dataset_name].validation_set["Confirmatory"]
             
@@ -515,7 +632,7 @@ class HTSDataPreprocessor:
                 self.datasets[dataset_name].training_set_descriptors = self.datasets[dataset_name].training_set["SMILES"]
                 self.datasets[dataset_name].validation_set_descriptors = self.datasets[dataset_name].validation_set["SMILES"]
                 self.datasets[dataset_name].representation = "smiles"
-                logging.info(f"SMILES loaded successfully for {dataset_name}")
+                print(f"SMILES loaded successfully for {dataset_name}")
         else:
             for dataset_name in self.dataset_names:
                 if dataset_name not in self.datasets:
@@ -533,7 +650,7 @@ class HTSDataPreprocessor:
                 self.datasets[dataset_name].training_set_descriptors = x_train
                 self.datasets[dataset_name].validation_set_descriptors = x_val
                 self.datasets[dataset_name].representation = representation
-                logging.info(f"{representation} loaded successfully for {dataset_name}")
+                print(f"{representation} loaded successfully for {dataset_name}")
 
     def get_dataset(self, dataset_name):
         try:
