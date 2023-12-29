@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='DataValuationPlatform',
-    version='1.2',
+    version='1.3',
     packages=find_packages(exclude=["Experiments*", ".ipynb_checkpoints*", "DataValuationPlatform.egg-info*"]),
     include_package_data=True,
     install_requires=[
-    'chembl-structure-pipeline==1.2.0,',
+    'chembl-structure-pipeline==1.2.0',
     'gpflow==2.8.0',
     'imbalanced-learn==0.10.1',
     'jupyter',
