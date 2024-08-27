@@ -89,29 +89,29 @@ parser = argparse.ArgumentParser(description=__doc__,
 parser.add_argument('--dataset', default="all",
                     help="Which dataset from ../Datasets to use for the analysis, options: [all, specific_name]")
 
-parser.add_argument('--knn', default="yes",
+parser.add_argument('--knn', default="no",
                     help="Whether to use KNN for the run, options: [yes, no]")
 
-parser.add_argument('--dvrl', default="yes",
+parser.add_argument('--dvrl', default="no",
                     help="Whether to use DVRL for the run, options: [yes, no]")
 
-parser.add_argument('--tracin', default="yes",
+parser.add_argument('--tracin', default="no",
                     help="Whether to use TracIn for the run, options: [yes, no]")
 
-parser.add_argument('--mvs_a', default="yes",
+parser.add_argument('--mvs_a', default="no",
                     help="Whether to use MVS-A for the run, options: [yes, no]")
 
-parser.add_argument('--catboost', default="yes",
+parser.add_argument('--catboost', default="no",
                     help="Whether to use CatBoost for the run, options: [yes, no]")
 
-parser.add_argument('--score', default="yes",
+parser.add_argument('--score', default="no",
                     help="Whether to use assay readouts for the run, options: [yes, no]")
 
-parser.add_argument('--fragment_filter', default="yes",
+parser.add_argument('--fragment_filter', default="no",
                     help="Whether to use a fragment filter for the run, options: [yes, no]")
 
 parser.add_argument('--filter_type', default="PAINS",
-                    help="Which fragment set to use for the run, options: [PAINS, PAINS_A, PAINS_B, PAINS_C, NIH]")
+                    help="Which fragment set to use for the run, options: [PAINS, PAINS_A, PAINS_B, PAINS_C, NIH, GSK_REOS]")
 
 parser.add_argument('--representation', default="ECFP",
                     help="Which sample representation to use for the run, options: [ECFP, SMILES, RDKIT]")
@@ -126,7 +126,7 @@ parser.add_argument('--log_predictions', default="yes",
                     help="Whether to log raw predictions, options: [yes, no]")
 
 parser.add_argument('--environment', default="others",
-                    help="What virtual environment is being used: [dvrl, shapley, others]")
+                    help="What virtual environment is being used: [shapley, others]")
 
 args = parser.parse_args()
 
@@ -203,7 +203,7 @@ def main(dataset,
     if dataset != "all":
         dataset_names = [dataset]
     else:
-        dataset_names = os.listdir("../../../Datasets")    
+        dataset_names = os.listdir("../../Datasets")    
         dataset_names = [x for x in dataset_names]
         
         
@@ -241,8 +241,8 @@ def main(dataset,
         print(f"[eval]: Processing dataset: {name}")
         #the smiles and activity labels are imported from the datasets folder
         #the files are stored in dataframes (df)
-        df_train = pd.read_csv("../../../Datasets/" + name + "/" + name + "_train.csv")
-        df_val = pd.read_csv("../../../Datasets/" + name + "/" + name + "_val.csv")
+        df_train = pd.read_csv("../../Datasets/" + name + "/" + name + "_train.csv")
+        df_val = pd.read_csv("../../Datasets/" + name + "/" + name + "_val.csv")
         
         mols_train = list(df_train["SMILES"])
         mols_train = [Chem.MolFromSmiles(x) for x in mols_train]
@@ -253,8 +253,8 @@ def main(dataset,
         #the features (x_train/val), either rdkit or ecfp, were precalculated for consistancy
         #and speed, and are imported from the Datasets_descr folder
         if representation != "smiles":
-            train_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
-            val_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+            train_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+            val_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
         
         
             x_train = pd.read_pickle(train_path)
@@ -362,7 +362,7 @@ def main(dataset,
         
         if fragment_filter == "yes":
             print("[eval]: Running filter analysis...")
-            fragment_filter_results, filter_log = run_filter(mols_train, idx_train, filter_type, y_f_train, y_c_train,
+            fragment_filter_results, filter_log = run_filter(mols_train, idx_train, filter_type, y_p_train, y_f_train, y_c_train,
                                         log_predictions)
             filter_box = store_row_without_replicates(filter_box, fragment_filter_results, fp_rate_train, tp_rate_train, i)
             

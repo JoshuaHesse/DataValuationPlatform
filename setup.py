@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='DataValuationPlatform',
-    version='1.3',
+    version='1.4',
     packages=find_packages(exclude=["Experiments*", ".ipynb_checkpoints*", "DataValuationPlatform.egg-info*"]),
     include_package_data=True,
     install_requires=[

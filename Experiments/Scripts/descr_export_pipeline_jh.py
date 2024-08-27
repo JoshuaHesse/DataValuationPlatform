@@ -24,7 +24,7 @@ import numpy as np
 from joblib import Parallel, delayed
 import os
 
-from utils_jh import *
+from ActiveLearning.utils_jh import *
 import numpy as np
 from rdkit import Chem
 import pandas as pd

@@ -74,9 +74,9 @@ def run_knn(db_train: pd.DataFrame,
         logs_temp = pd.DataFrame([])
         
         #load in precalculated representations (either ecfp or rdkit)
-        train_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
+        train_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_train.pkl"
         x_train = pd.read_pickle(train_path)
-        val_path = "../../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
+        val_path = "../../Datasets_descr/" + name + "/" + name + "_" + representation + "_val.pkl"
         x_val = pd.read_pickle(val_path)
         
         

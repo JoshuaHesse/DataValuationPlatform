@@ -1,0 +1,26 @@
+Codename,UniProt ID,Primary HTS AID,Primary HTS measurement,Activity score,Confirmatory HTS AID,Confirmatory HTS measurement,Confirmatory HTS cutoff,Source publication ID
+GPCR,O43613,485270,Inhibition at 6.6 uM,PubChem activity score,492964,2 Replicates,46.00%,PMC5962024
+GPCR_2,P25929 ,1040,Inhibition at 3.6 uM,PubChem activity score,1254,2 Replicates,20.00%,PMC5962024
+GPCR_3,P08482,628,B score at 10 uM,B score at 10 uM,677,2 Replicates,3SD,PMC5962024
+ion_channel,P35561,1672,B score at 10 uM,PubChem activity score,2032,2 Replicates,3SD,PMC5962024
+ion_channel2,O95180,449739,B score at 10 uM,B score at 10 uM,489005,EC50,Failed fit,PMC5962024
+ion_channel3,O88943,2239,B score at 10 uM,PubChem activity score,2287,2 Replicates,3SD,PMC5962024
+transporter,Q9GZV3,488975,B score at 10 uM,PubChem activity score,493221,2 Replicates,3SD,PMC5962024
+transcription,CAD53472,504558,Activity at 12.5 uM,PubChem activity score,588343,AC50,350 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+transcription2,AAH94064,2098,Activity at 2.5 uM,PubChem activity score,2382,EC50,195 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+transcription3,P34707,624304,Inhibition at 21.8 uM,Ratio:Normalized at 21.8 uM,624474,IC50,"Equation (pIC50, QC)",10.26434/chemrxiv-2022-cb3tz
+ubiquitin,P61088,485273,Inhibition at 20 uM,PubChem activity score,493155,IC50,"Equation (pIC50, QC)",10.26434/chemrxiv-2022-cb3tz
+serine,Q9Y337,873,Inhibition at 5 uM,PubChem activity score,1431,IC50,50 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+splicing,P9WHJ3,2221,Activity at 7.5 nM,PubChem activity score,435010,EC50,380 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+channel_atp,P13569,720511,Activity at 7.5 uM,PubChem activity score,743267,AC50,100 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+cysteine_protease,P55212,686996,Activity at 12.5 uM,PubChem activity score,720632,AC50,70 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+zinc_finger,Q9XUB2,1832,Activity at 10 uM,PubChem activity score,1960,EC50,300 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+dna_repair,P43351,651710,Inhibition at 18.71 uM,PubChem activity score,652116,AC50,47 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+toxin_B,Q189K3,652162,Inhibition at 9.99 uM,PubChem activity score,720512,AC50,42 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+Streptokinase,P10520,1662,Inhibition at 7.5 uM,PubChem activity score,1914,EC50,150 uM,10.26434/chemrxiv-2022-cb3tz
+methylation,O96028,743445,Inhibition at 12.5 uM,PubChem activity score,1053173,AC50,20 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+hsf1,Q52L52,504408,Activity at 9 uM (maybe 7.5?),PubChem activity score,435004,EC50,260 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+transcription_4,Q06710,652154,Activity at 12.62 uM,PubChem activity score,687027,AC50,70 uM or failed fit,10.26434/chemrxiv-2022-cb3tz
+fatty_acid_synthase,P49327,602261,Inhibition at 15 uM,%Activity at 15 uM,624326,IC50,20 uM,10.26434/chemrxiv-2022-cb3tz
+RNA_binding,P11940,588489,Inhibition at 20 uM,%Activity at 20 uM corrected,602259,IC50,20 uM,10.26434/chemrxiv-2022-cb3tz
+Transcription_5,O75030,1259374,inhibition at 2 uM,PubChem activity score,1259375,IC50,5 uM,10.26434/chemrxiv-2022-cb3tz
